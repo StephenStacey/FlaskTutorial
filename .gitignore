@@ -15,7 +15,7 @@ build/
 
 # Ignore sensitive files
 .env
-.envFlaskTutorial
+.envFlaskTutorial/
 
 # Ignore system files
 .DS_Store
