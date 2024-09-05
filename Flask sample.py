@@ -12,7 +12,19 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     # The function returns HTML content, which will be displayed on the homepage
-    return render_template("index.html", content=["tim", "joe", "bill"])
+    return render_template("index.html")
+
+# Define a new route for '/test'
+# The @app.route decorator binds the function 'test()' to the URL '/test'.
+# When a user visits 'http://127.0.0.1:5000/test', this function will be executed.
+@app.route("/test")
+def test():
+    # The 'render_template' function renders an HTML template (in this case, 'test.html').
+    # Flask looks for the 'test.html' file inside a folder called 'templates'.
+    # Make sure you have a 'templates' folder in the same directory as your Flask app
+    # and that 'test.html' is located inside that folder.
+    return render_template("test.html")
+
 
 # Define a dynamic route that accepts a 'name' as a variable in the URL
 # The <name> placeholder allows the route to accept different values
