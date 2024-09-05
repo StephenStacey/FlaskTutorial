@@ -2,7 +2,7 @@
 # Flask: The main class for creating a web application
 # redirect: Used to redirect users to a different route
 # url_for: Helps build a URL to a specific function dynamically
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect, url_for, render_template
 
 # Create an instance of the Flask class, which will be the main app
 app = Flask(__name__)
@@ -12,7 +12,7 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     # The function returns HTML content, which will be displayed on the homepage
-    return "Hello! This is the main page <h1>HELLO</h1>"
+    return render_template("index.html")
 
 # Define a dynamic route that accepts a 'name' as a variable in the URL
 # The <name> placeholder allows the route to accept different values
