@@ -12,7 +12,7 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     # The function returns HTML content, which will be displayed on the homepage
-    return render_template("index.html")
+    return render_template("index.html", content=["tim", "joe", "bill"])
 
 # Define a dynamic route that accepts a 'name' as a variable in the URL
 # The <name> placeholder allows the route to accept different values
