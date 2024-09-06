@@ -2,10 +2,11 @@
 # Flask: The main class for creating a web application
 # redirect: Used to redirect users to a different route
 # url_for: Helps build a URL to a specific function dynamically
-from flask import Flask, redirect, url_for, render_template
+from flask import Flask, redirect, url_for, render_template, request
 
 # Create an instance of the Flask class, which will be the main app
 app = Flask(__name__)
+
 
 # Define the route for the home page ('/') and assign it to the 'home' function
 # This route is accessed when the user visits http://127.0.0.1:5000/
@@ -13,6 +14,7 @@ app = Flask(__name__)
 def home():
     # The function returns HTML content, which will be displayed on the homepage
     return render_template("index.html")
+
 
 # Define a new route for '/test'
 # The @app.route decorator binds the function 'test()' to the URL '/test'.
@@ -30,9 +32,10 @@ def test():
 # The <name> placeholder allows the route to accept different values
 # Example: http://127.0.0.1:5000/Stephen will display "Hello Stephen"
 @app.route("/<name>")
-def user(name):
+def greet_user(name):
     # Return a greeting using the 'name' provided in the URL
     return f"Hello {name}"
+
 
 # Define a route for '/admin' that redirects to the homepage
 # If a user tries to access the '/admin' URL, they will be redirected to '/'
@@ -41,6 +44,21 @@ def admin():
     # Use the 'redirect' function to send the user to the 'home' route
     # 'url_for' dynamically generates the URL for the 'home' function
     return redirect(url_for("home"))
+
+
+@app.route("/login", methods= ["POST", "GET"])
+def login():
+    if request.method == "POST":
+        user = request.form["nm"]
+        return redirect(url_for("user", usr=user))
+    else:    
+        return render_template("login.html")
+
+
+@app.route("/<usr>")
+def user(usr):
+    return f"<h1>{usr}</h1>"
+
 
 # This block ensures that the Flask app runs only if the script is executed directly
 # If this script is imported as a module in another script, this block won't run
