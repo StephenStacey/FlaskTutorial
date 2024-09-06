@@ -2,10 +2,28 @@
 # Flask: The main class for creating a web application
 # redirect: Used to redirect users to a different route
 # url_for: Helps build a URL to a specific function dynamically
-from flask import Flask, redirect, url_for, render_template, request
+# render_template: Renders HTML templates
+# request: Used to handle incoming HTTP requests (e.g., form data)
+# session: Used to store information across requests, like user login state
+from flask import Flask, redirect, url_for, render_template, request, session
+
+# timedelta: A class for representing differences in time; commonly used for setting session expiry time.
+from datetime import timedelta
+
+
 
 # Create an instance of the Flask class, which will be the main app
+# The Flask instance will handle all incoming requests and route them accordingly
 app = Flask(__name__)
+
+# Secret key is required for session management in Flask
+# It is used to securely sign the session cookie to prevent tampering
+# You should keep this secret key safe and ideally store it in an environment variable for production use
+app.secret_key = "my_secret_key"
+
+# Setting the lifetime of the session to 1 day
+# This means the session will remain valid for one day, after which it will expire
+app.permanent_session_lifetime = timedelta(days=1)
 
 
 # Define the route for the home page ('/') and assign it to the 'home' function
@@ -46,18 +64,36 @@ def admin():
     return redirect(url_for("home"))
 
 
-@app.route("/login", methods= ["POST", "GET"])
+@app.route("/login", methods=["POST", "GET"])
 def login():
     if request.method == "POST":
-        user = request.form["nm"]
-        return redirect(url_for("user", usr=user))
-    else:    
-        return render_template("login.html")
+        session.permanent = True
+        user = request.form["nm"]  # 'nm' should match the input name in the login form
+        session["user"] = user  # Store the username in the session
+        return redirect(url_for("user"))  # Redirect to user page
+    else:
+        # Check if 'user' is in the session
+        if "user" in session:
+            return redirect(url_for("user"))  # Redirect to user page if already logged in
+        return render_template("login.html")  # Render login page if not logged in
 
 
-@app.route("/<usr>")
-def user(usr):
-    return f"<h1>{usr}</h1>"
+@app.route("/user")
+def user():
+    # Check if 'user' is in the session
+    if "user" in session:
+        # Retrieve the user from the session
+        user = session["user"]
+        return f"<h1>{user}</h1>"
+    else:
+        # If 'user' is not in session, redirect to the login page
+        return redirect(url_for("login"))
+
+
+@app.route("/logout")
+def logout():
+    session.pop("user", None)  # Removes 'user' from the session if it exists
+    return redirect(url_for("login"))  # Redirects to the login page
 
 
 # This block ensures that the Flask app runs only if the script is executed directly
