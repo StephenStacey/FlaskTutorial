@@ -5,11 +5,10 @@
 # render_template: Renders HTML templates
 # request: Used to handle incoming HTTP requests (e.g., form data)
 # session: Used to store information across requests, like user login state
-from flask import Flask, redirect, url_for, render_template, request, session
+from flask import Flask, redirect, url_for, render_template, request, session, flash
 
 # timedelta: A class for representing differences in time; commonly used for setting session expiry time.
 from datetime import timedelta
-
 
 
 # Create an instance of the Flask class, which will be the main app
@@ -70,10 +69,12 @@ def login():
         session.permanent = True
         user = request.form["nm"]  # 'nm' should match the input name in the login form
         session["user"] = user  # Store the username in the session
+        flash("Login Successful")
         return redirect(url_for("user"))  # Redirect to user page
     else:
         # Check if 'user' is in the session
         if "user" in session:
+            flash("Already Logged In")
             return redirect(url_for("user"))  # Redirect to user page if already logged in
         return render_template("login.html")  # Render login page if not logged in
 
@@ -84,16 +85,20 @@ def user():
     if "user" in session:
         # Retrieve the user from the session
         user = session["user"]
-        return f"<h1>{user}</h1>"
+        return render_template("user.html", user=user)
     else:
+        flash("You are not logged in!")
         # If 'user' is not in session, redirect to the login page
         return redirect(url_for("login"))
 
 
 @app.route("/logout")
 def logout():
-    session.pop("user", None)  # Removes 'user' from the session if it exists
+    user = session.get("user")  # Get 'user' from the session, if it exists
+    flash(f"You have been logged out, {user}!", "info")  # Use Python f-string for formatting
+    session.pop("user", None)  # Removes 'user' from the session
     return redirect(url_for("login"))  # Redirects to the login page
+
 
 
 # This block ensures that the Flask app runs only if the script is executed directly
