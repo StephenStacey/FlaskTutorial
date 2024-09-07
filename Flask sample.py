@@ -100,7 +100,6 @@ def logout():
     return redirect(url_for("login"))  # Redirects to the login page
 
 
-
 # This block ensures that the Flask app runs only if the script is executed directly
 # If this script is imported as a module in another script, this block won't run
 if __name__ == "__main__":
